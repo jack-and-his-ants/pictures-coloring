@@ -6,3 +6,5 @@ torch
 torchvision
 scikit-learn
 ipykernel
+scikit-image
+tdqm
