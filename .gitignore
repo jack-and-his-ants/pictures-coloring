@@ -1,3 +1,8 @@
 data/
 .venv/
 dataset/
+.DS_Store
+centroids.npy
+.gitignore
+kmeans.pkl
+testlab.npy
