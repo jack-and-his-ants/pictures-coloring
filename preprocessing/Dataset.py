@@ -87,14 +87,19 @@ class Dataset():
                 clustered_ab = clustered_ab.astype(np.uint16)
 
 
-                np.save(os.path.join(self.destination_path,x_folder_name,image_name.split('.')[0]),l)
-                np.save(os.path.join(self.destination_path,y_folder_name,image_name.split('.')[0]),clustered_ab)
+                np.save(os.path.join(self.destination_path,x_folder_name,image_name.split('.')[0])+".npy",l)
+                np.save(os.path.join(self.destination_path,y_folder_name,image_name.split('.')[0])+".npy",clustered_ab)
         print("done")
         
 
 
     
-
+if __name__ == "__main__":
+    source_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/data/train/all"
+    destination_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/dataset"
+    dataset = Dataset(source_dir,destination_dir,256,256)
+    dataset.run_kmeans('kmeans.pkl',100)
+    dataset.create_dataset('kmeans.pkl')
     
 
     
