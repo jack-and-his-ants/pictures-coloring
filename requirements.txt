@@ -1,0 +1,11 @@
+pillow
+numpy
+pandas
+matplotlib
+torch
+torchvision
+scikit-learn
+ipykernel
+scikit-image
+tdqm
+typer
