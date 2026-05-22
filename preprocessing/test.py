@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from skimage.color import lab2rgb
 import joblib
 
-L_DIR = "dataset/L_luminance"
-Y_DIR = "dataset/class_labels"
+L_DIR = "test_dataset/L_luminance"
+Y_DIR = "test_dataset/class_labels"
 
-KMEANS_PATH = "kmeans.pkl"
+KMEANS_PATH = "test_kmeans.pkl"
 
 files = os.listdir(L_DIR)
 file_name = random.choice(files)

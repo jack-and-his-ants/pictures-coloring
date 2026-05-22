@@ -5,6 +5,7 @@ import numpy as np
 import random
 import os
 from PIL import Image
+import config as config
 
 
 class Dataset():
@@ -26,7 +27,7 @@ class Dataset():
         return color.rgb2lab(rgb_norm)
 
     
-    def run_kmeans(self,save_path,n_of_files,random_state=42, k=64,batch_size=1000,verbose=True):
+    def run_kmeans(self,save_path,n_of_files, k=64,random_state=42,batch_size=1000,verbose=True):
         list_src_dir = os.listdir(self.source_path)
         if n_of_files > len(list_src_dir):
             n_of_files = len(list_src_dir)
@@ -96,10 +97,10 @@ class Dataset():
     
 if __name__ == "__main__":
     source_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/data/train/all"
-    destination_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/dataset"
-    dataset = Dataset(source_dir,destination_dir,256,256)
-    dataset.run_kmeans('kmeans.pkl',100)
-    dataset.create_dataset('kmeans.pkl')
+    destination_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/test_dataset"
+    dataset = Dataset(source_dir,destination_dir,config.IMAGE_WIDTH,config.IMAGE_HEIGHT)
+    dataset.run_kmeans('test_kmeans.pkl',config.KMEANS_CLASSES)
+    dataset.create_dataset('test_kmeans.pkl')
     
 
     
