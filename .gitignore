@@ -8,3 +8,4 @@ kmeans.pkl
 testlab.npy
 test_dataset/
 /splits/
+/notebooks/checkpoints/

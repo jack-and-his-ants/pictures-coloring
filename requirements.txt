@@ -7,6 +7,6 @@ torchvision
 scikit-learn
 ipykernel
 scikit-image
-tdqm
+tqdm
 typer
 joblib

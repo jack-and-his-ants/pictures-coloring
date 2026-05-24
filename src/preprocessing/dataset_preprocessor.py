@@ -96,10 +96,10 @@ class Dataset():
 
     
 if __name__ == "__main__":
-    source_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/data/train/all"
-    destination_dir = "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/test_dataset"
-    dataset = Dataset(source_dir,destination_dir,config.IMAGE_WIDTH,config.IMAGE_HEIGHT)
-    dataset.run_kmeans('test_kmeans.pkl',config.KMEANS_CLASSES)
+    source_dir = "/data/training/all"
+    destination_dir = "/test_dataset"
+    dataset = Dataset(source_dir, destination_dir, config.IMAGE_WIDTH, config.IMAGE_HEIGHT)
+    dataset.run_kmeans('test_kmeans.pkl', config.KMEANS_CLASSES)
     dataset.create_dataset('test_kmeans.pkl')
     
 
