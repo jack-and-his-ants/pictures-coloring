@@ -44,7 +44,7 @@ def validate(
 ):
     model.eval()
 
-    loss_sum = 0.0
+    running_loss = 0.0
     correct = 0
     total = 0
 
@@ -57,41 +57,60 @@ def validate(
 
         loss = criterion(logits, y)
 
-        loss_sum += loss.item()
+        running_loss += loss.item()
 
         pred = logits.argmax(dim=1)
 
         correct += (pred == y).sum().item()
         total += y.numel()
 
-    return (
-        loss_sum / len(loader),
-        correct / total
-    )
+    accuracy = correct / total
+
+    return running_loss / len(loader), accuracy
 
 
 def train_model(
+    weights,
     model,
     train_loader,
     val_loader,
-    device,
-    epochs,
-    lr,
-    checkpoint_path
+    epochs=20,
+    lr=1e-3,
+    checkpoint_dir="checkpoints"
+
 ):
-    criterion = nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.Adam(
-        model.parameters(),
-        lr=lr
+    device = (
+        "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
     )
 
-    best_loss = float("inf")
+    print(f"Using device: {device}")
 
-    os.makedirs(
-        os.path.dirname(checkpoint_path),
-        exist_ok=True
-    )
+    model = model.to(device)
+
+    criterion = nn.CrossEntropyLoss(weight=weights)
+
+    optimizer = torch.optim.AdamW(
+    filter(
+        lambda p: p.requires_grad,
+        model.parameters()
+    ),
+    lr=lr,
+    weight_decay=1e-4
+)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer,
+    mode="min",
+    factor=0.5,
+    patience=3
+)
+
+    best_val_loss = float("inf")
+
+    import os
+    os.makedirs(checkpoint_dir, exist_ok=True)
 
     for epoch in range(epochs):
 
@@ -111,19 +130,30 @@ def train_model(
         )
 
         print(
-            f"Epoch {epoch+1}/{epochs} "
-            f"train={train_loss:.4f} "
-            f"val={val_loss:.4f} "
-            f"acc={val_acc:.4f}"
+            f"Epoch [{epoch+1}/{epochs}] "
+            f"train_loss={train_loss:.4f} "
+            f"val_loss={val_loss:.4f} "
+            f"val_acc={val_acc:.4f}"
         )
 
-        if val_loss < best_loss:
+        if val_loss < best_val_loss:
 
-            best_loss = val_loss
+            best_val_loss = val_loss
 
             torch.save(
-                model.state_dict(),
-                checkpoint_path
+                {
+                    "epoch": epoch,
+                    "model_state_dict": model.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "val_loss": val_loss,
+                },
+                os.path.join(
+                    checkpoint_dir,
+                    "best_model.pth"
+                )
             )
 
             print("Saved best model")
+        scheduler.step(val_loss)
+
+    return model
