@@ -21,6 +21,37 @@ def main():
         "dataset/class_labels",
         "splits/validation_split.txt"
     )
+    from collections import Counter
+    import numpy as np
+    import torch
+
+    counter = Counter()
+
+    for _, y in train_dataset:
+
+        values, counts = np.unique(
+            y.numpy(),
+            return_counts=True
+        )
+
+        for v, c in zip(values, counts):
+            counter[int(v)] += int(c)
+
+    weights = []
+
+    for i in range(32):
+        freq = counter[i]
+
+        weights.append(
+            1.0 / np.sqrt(freq)
+        )
+
+    weights = torch.tensor(
+        weights,
+        dtype=torch.float32
+    ).to(device)
+
+    weights /= weights.mean()
 
     train_loader = DataLoader(
         train_dataset,
@@ -39,13 +70,12 @@ def main():
     ).to(device)
 
     train_model(
-        model=model,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        device=device,
+        weights,
+        model,
+        train_loader,
+        val_loader,
         epochs=50,
-        lr=1e-3,
-        checkpoint_path="checkpoints/best_model.pth"
+        lr=1e-3
     )
 
 
