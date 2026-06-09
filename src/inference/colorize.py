@@ -80,53 +80,54 @@ def colorize_image(
         pred_classes
     )
 
-device = get_device()
+if __name__=="main":
+    device = get_device()
 
-model = ColorizationNetwork(
-    n_classes=32
-)
+    model = ColorizationNetwork(
+        n_classes=32
+    )
 
-checkpoint = torch.load(
-    "notebooks/checkpoints/best_model.pth",
-    map_location=device
-)
+    checkpoint = torch.load(
+        "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/notebooks/checkpoints/best_model.pth",
+        map_location=device
+    )
 
-model.load_state_dict(
-    checkpoint["model_state_dict"]
-)
+    model.load_state_dict(
+        checkpoint["model_state_dict"]
+    )
 
-model.to(device)
+    model.to(device)
 
-kmeans = joblib.load(
-    "test_kmeans.pkl"
-)
+    kmeans = joblib.load(
+        "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/test_kmeans.pkl"
+    )
 
-original, colorized, classes = colorize_image(
-    "data/test/Image_70.jpg",
-    model,
-    kmeans,
-    device=device
-)
+    original, colorized, classes = colorize_image(
+        "/Users/jacek/Desktop/GitHubProjects/pictures-coloring/data/test/Image_70.jpg",
+        model,
+        kmeans,
+        device=device
+    )
 
-plt.figure(figsize=(12, 5))
+    plt.figure(figsize=(12, 5))
 
-plt.subplot(1, 3, 1)
-plt.imshow(original)
-plt.title("Original")
-plt.axis("off")
+    plt.subplot(1, 3, 1)
+    plt.imshow(original)
+    plt.title("Original")
+    plt.axis("off")
 
-plt.subplot(1, 3, 2)
-plt.imshow(
-    color.rgb2gray(original),
-    cmap="gray"
-)
-plt.title("Input L")
-plt.axis("off")
+    plt.subplot(1, 3, 2)
+    plt.imshow(
+        color.rgb2gray(original),
+        cmap="gray"
+    )
+    plt.title("Input L")
+    plt.axis("off")
 
-plt.subplot(1, 3, 3)
-plt.imshow(colorized)
-plt.title("Colorized")
-plt.axis("off")
+    plt.subplot(1, 3, 3)
+    plt.imshow(colorized)
+    plt.title("Colorized")
+    plt.axis("off")
 
-plt.show()
+    plt.show()
 
